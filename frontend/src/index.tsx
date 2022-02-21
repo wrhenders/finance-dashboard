@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
-import YieldCurve from "./components/YieldCurve";
+import YieldCurve, { TreasuryCurve } from "./components/YieldCurve";
 
 const App = () => {
-  const [currentChartData, setCurrentChartData] = useState({});
+  const [currentChartData, setCurrentChartData] = useState<TreasuryCurve | any>(
+    {}
+  );
 
   useEffect(() => {
     const fredData = async () => {

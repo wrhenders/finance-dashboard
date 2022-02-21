@@ -1,17 +1,27 @@
 import Plot from "react-plotly.js";
 
 interface YieldCurveProps {
-  chartData: Object;
+  chartData: TreasuryCurve;
 }
-interface TreasuryCurve {
+export interface TreasuryCurve {
   DGS1MO: string;
   DGS3MO: string;
   DGS6MO: string;
   DGS1: string;
+  DGS2: string;
   DGS5: string;
-  DGS1O: string;
-  DGS2O: string;
-  DGS3O: string;
+  DGS10: string;
+  DGS20: string;
+  DGS30: string;
+  DGS1MO_old: string;
+  DGS3MO_old: string;
+  DGS6MO_old: string;
+  DGS1_old: string;
+  DGS2_old: string;
+  DGS5_old: string;
+  DGS10_old: string;
+  DGS20_old: string;
+  DGS30_old: string;
 }
 
 const YieldCurve: React.FC<YieldCurveProps> = ({ chartData }) => {
@@ -27,12 +37,8 @@ const YieldCurve: React.FC<YieldCurveProps> = ({ chartData }) => {
     "30 Yr",
   ];
 
-  const getYValue = (age: string, old?: boolean) => {
-    if (!old) {
-      return `${chartData[age as keyof Object]}`;
-    } else {
-      return `${chartData[(age + "_old") as keyof Object]}`;
-    }
+  const getYValue = (age: keyof TreasuryCurve) => {
+    return `${chartData[age]}`;
   };
 
   return (
@@ -59,15 +65,15 @@ const YieldCurve: React.FC<YieldCurveProps> = ({ chartData }) => {
           mode: "lines+markers",
           x: xAxis,
           y: [
-            getYValue("DGS1MO", true),
-            getYValue("DGS3MO", true),
-            getYValue("DGS6MO", true),
-            getYValue("DGS1", true),
-            getYValue("DGS2", true),
-            getYValue("DGS5", true),
-            getYValue("DGS10", true),
-            getYValue("DGS20", true),
-            getYValue("DGS30", true),
+            getYValue("DGS1MO_old"),
+            getYValue("DGS3MO_old"),
+            getYValue("DGS6MO_old"),
+            getYValue("DGS1_old"),
+            getYValue("DGS2_old"),
+            getYValue("DGS5_old"),
+            getYValue("DGS10_old"),
+            getYValue("DGS20_old"),
+            getYValue("DGS30_old"),
           ],
         },
       ]}
@@ -77,6 +83,7 @@ const YieldCurve: React.FC<YieldCurveProps> = ({ chartData }) => {
         title: "Treasury Yield Spread",
         showlegend: true,
       }}
+      config={{ displayModeBar: false, scrollZoom: true }}
     />
   );
 };
