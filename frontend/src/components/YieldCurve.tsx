@@ -1,9 +1,7 @@
 import Plot from "react-plotly.js";
+import { useState, useEffect } from "react";
 
-interface YieldCurveProps {
-  chartData: TreasuryCurve;
-}
-export interface TreasuryCurve {
+interface TreasuryCurve {
   DGS1MO: string;
   DGS3MO: string;
   DGS6MO: string;
@@ -24,7 +22,22 @@ export interface TreasuryCurve {
   DGS30_old: string;
 }
 
-const YieldCurve: React.FC<YieldCurveProps> = ({ chartData }) => {
+const YieldCurve: React.FC = () => {
+  const [currentChartData, setCurrentChartData] = useState<TreasuryCurve | any>(
+    {}
+  );
+
+  useEffect(() => {
+    const fredData = async () => {
+      const response = await fetch(`/api/FRED`);
+      const data = await response.json();
+      if (!data) {
+        return;
+      }
+      setCurrentChartData({ ...data });
+    };
+    fredData();
+  }, []);
   const xAxis = [
     "1 Mo",
     "3 Mo",
@@ -38,53 +51,57 @@ const YieldCurve: React.FC<YieldCurveProps> = ({ chartData }) => {
   ];
 
   const getYValue = (age: keyof TreasuryCurve) => {
-    return `${chartData[age]}`;
+    return `${currentChartData[age]}`;
   };
 
   return (
-    <Plot
-      data={[
-        {
-          name: "Current",
-          mode: "lines+markers",
-          x: xAxis,
-          y: [
-            getYValue("DGS1MO"),
-            getYValue("DGS3MO"),
-            getYValue("DGS6MO"),
-            getYValue("DGS1"),
-            getYValue("DGS2"),
-            getYValue("DGS5"),
-            getYValue("DGS10"),
-            getYValue("DGS20"),
-            getYValue("DGS30"),
-          ],
-        },
-        {
-          name: "30 days ago",
-          mode: "lines+markers",
-          x: xAxis,
-          y: [
-            getYValue("DGS1MO_old"),
-            getYValue("DGS3MO_old"),
-            getYValue("DGS6MO_old"),
-            getYValue("DGS1_old"),
-            getYValue("DGS2_old"),
-            getYValue("DGS5_old"),
-            getYValue("DGS10_old"),
-            getYValue("DGS20_old"),
-            getYValue("DGS30_old"),
-          ],
-        },
-      ]}
-      layout={{
-        width: 500,
-        height: 300,
-        title: "Treasury Yield Spread",
-        showlegend: true,
-      }}
-      config={{ displayModeBar: false, scrollZoom: true }}
-    />
+    <>
+      {currentChartData && (
+        <Plot
+          data={[
+            {
+              name: "Current",
+              mode: "lines+markers",
+              x: xAxis,
+              y: [
+                getYValue("DGS1MO"),
+                getYValue("DGS3MO"),
+                getYValue("DGS6MO"),
+                getYValue("DGS1"),
+                getYValue("DGS2"),
+                getYValue("DGS5"),
+                getYValue("DGS10"),
+                getYValue("DGS20"),
+                getYValue("DGS30"),
+              ],
+            },
+            {
+              name: "30 days ago",
+              mode: "lines+markers",
+              x: xAxis,
+              y: [
+                getYValue("DGS1MO_old"),
+                getYValue("DGS3MO_old"),
+                getYValue("DGS6MO_old"),
+                getYValue("DGS1_old"),
+                getYValue("DGS2_old"),
+                getYValue("DGS5_old"),
+                getYValue("DGS10_old"),
+                getYValue("DGS20_old"),
+                getYValue("DGS30_old"),
+              ],
+            },
+          ]}
+          layout={{
+            width: 500,
+            height: 300,
+            title: "Treasury Yield Spread",
+            showlegend: true,
+          }}
+          config={{ displayModeBar: false, scrollZoom: true }}
+        />
+      )}
+    </>
   );
 };
 

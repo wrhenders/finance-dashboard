@@ -1,24 +1,14 @@
-import { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
-import YieldCurve, { TreasuryCurve } from "./components/YieldCurve";
+import YieldCurve from "./components/YieldCurve";
+import CandlestickGraph from "./components/CandlestickGraph";
 
 const App = () => {
-  const [currentChartData, setCurrentChartData] = useState<TreasuryCurve | any>(
-    {}
+  return (
+    <div>
+      <YieldCurve />
+      <CandlestickGraph stock="SPY" />
+    </div>
   );
-
-  useEffect(() => {
-    const fredData = async () => {
-      const response = await fetch(`/api/FRED`);
-      const data = await response.json();
-      if (!data) {
-        return;
-      }
-      setCurrentChartData({ ...data });
-    };
-    fredData();
-  }, []);
-  return <YieldCurve chartData={currentChartData} />;
 };
 
 ReactDOM.render(<App />, document.querySelector("#root"));

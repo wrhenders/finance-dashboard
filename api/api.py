@@ -1,5 +1,3 @@
-# from random import randrange
-from optparse import Values
 import os
 import requests
 from dotenv import load_dotenv
@@ -9,15 +7,35 @@ import flask as flask
 
 load_dotenv(dotenv_path="./.env.local")
 FRED_KEY = os.environ.get("FRED_KEY", "")
+FINNHUB_KEY = os.environ.get("FINNHUB_KEY", "")
 
 last_month = (datetime.today() - timedelta(30)).strftime("%Y-%m-%d")
+morn_timestamp = int(
+    round(datetime.now().replace(hour=8, minute=0, second=0, microsecond=0).timestamp())
+)
+close_timestamp = int(
+    round(
+        datetime.now().replace(hour=15, minute=0, second=0, microsecond=0).timestamp()
+    )
+)
 
 app = flask.Flask(__name__)
 
-# @app.route("/api/chart_data")
-# def getChartData():
-#     array = list(map(lambda x: {"x": x, "y": randrange(20)}, range(10)))
-#     return jsonify(array)
+
+@app.route("/api/FH/<stock>")
+def get_TD_data(stock):
+    payload = {
+        "token": FINNHUB_KEY,
+        "symbol": stock,
+        "resolution": 5,
+        "from": morn_timestamp,
+        "to": close_timestamp,
+    }
+    response = requests.get(
+        f"https://finnhub.io/api/v1/stock/candle",
+        params=payload,
+    ).json()
+    return response
 
 
 @app.route("/api/FRED")
@@ -61,19 +79,3 @@ def get_FRED_data():
         values[i + "_old"] = response[0]["value"]
 
     return values
-
-    # for i in yields:
-    #     payload = {
-    #         "series_id": i,
-    #         "api_key": FRED_KEY,
-    #         "file_type": "json",
-    #         "limit": 5,
-    #         "observation_start": last_month,
-    #     }
-    #     response = requests.get(
-    #         "https://api.stlouisfed.org/fred/series/observations",
-    #         params=payload,
-    #     ).json()
-    #     values.append(response)
-
-    # return values
