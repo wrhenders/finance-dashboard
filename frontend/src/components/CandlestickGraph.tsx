@@ -32,15 +32,8 @@ const CandlestickGraph: React.FC<CandlestickGraphProps> = ({ stock }) => {
     getStockData();
   }, []);
 
-  const dateArray = currentChartData.t.map((num) =>
-    new Date(num * 1000).toLocaleString("en-us", {
-      timeZone: "America/Chicago",
-    })
-  );
   const timeArray = currentChartData.t.map((num) =>
-    new Date(num * 1000).toLocaleTimeString("en-us", {
-      timeZone: "America/Chicago",
-    })
+    new Date(num * 1000).toLocaleTimeString("en-us")
   );
 
   return (
@@ -60,9 +53,8 @@ const CandlestickGraph: React.FC<CandlestickGraphProps> = ({ stock }) => {
           layout={{
             width: 800,
             height: 600,
-            title: `${stock} Candlestick`,
+            title: `${stock} Candlestick ${new Date().toLocaleDateString()}`,
             xaxis: {
-              range: [dateArray[0], dateArray[dateArray.length - 1]],
               nticks: 8,
               automargin: true,
               rangeslider: {
