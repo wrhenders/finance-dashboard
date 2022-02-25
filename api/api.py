@@ -2,8 +2,8 @@ import os
 import requests
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
-
-import flask as flask
+import json
+import flask as Flask
 
 load_dotenv(dotenv_path="./.env.local")
 FRED_KEY = os.environ.get("FRED_KEY", "")
@@ -19,11 +19,11 @@ close_timestamp = int(
     )
 )
 
-app = flask.Flask(__name__)
+app = Flask.Flask(__name__)
 
 
 @app.route("/api/FH/<stock>")
-def get_TD_data(stock):
+def get_FH_data(stock):
     payload = {
         "token": FINNHUB_KEY,
         "symbol": stock,
@@ -33,6 +33,22 @@ def get_TD_data(stock):
     }
     response = requests.get(
         f"https://finnhub.io/api/v1/stock/candle",
+        params=payload,
+    ).json()
+    return response
+
+
+@app.route("/api/FH/crypto/<symbol>")
+def get_FH_crypto_data(symbol):
+    payload = {
+        "token": FINNHUB_KEY,
+        "symbol": f"COINBASE:{symbol}-USD",
+        "resolution": 5,
+        "from": morn_timestamp,
+        "to": close_timestamp,
+    }
+    response = requests.get(
+        f"https://finnhub.io/api/v1/crypto/candle",
         params=payload,
     ).json()
     return response

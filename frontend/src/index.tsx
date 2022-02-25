@@ -6,7 +6,8 @@ const App = () => {
   return (
     <div>
       <YieldCurve />
-      <CandlestickGraph stock="SPY" />
+      <CandlestickGraph stock="SPY" crypto={false} />
+      <CandlestickGraph stock="BTC" crypto={true} />
     </div>
   );
 };

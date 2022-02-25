@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 
 interface CandlestickGraphProps {
   stock: string;
+  crypto: boolean;
 }
 interface StockData {
   t: number[];
@@ -19,14 +20,17 @@ const initialState: StockData = {
   o: [],
 };
 
-const CandlestickGraph: React.FC<CandlestickGraphProps> = ({ stock }) => {
+const CandlestickGraph: React.FC<CandlestickGraphProps> = ({
+  stock,
+  crypto,
+}) => {
   const [currentChartData, setCurrentChartData] =
     useState<StockData>(initialState);
   useEffect(() => {
     const getStockData = async () => {
-      const data = await fetch(`/api/FH/${stock}`).then((response) =>
-        response.json()
-      );
+      const data = await fetch(
+        `/api/FH/${crypto ? "crypto/" : ""}${stock}`
+      ).then((response) => response.json());
       setCurrentChartData({ ...data });
     };
     getStockData();
