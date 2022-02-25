@@ -46,5 +46,5 @@
     "@types/react-plotly.js": "^2.5.0",
     "@types/react-vis": "^1.11.10"
   },
-  "proxy": "http://localhost:5000"
+  "proxy": "http://localhost:5000/"
 }
