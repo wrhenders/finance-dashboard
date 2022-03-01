@@ -8,14 +8,25 @@ import flask as Flask
 load_dotenv(dotenv_path="./.env.local")
 FRED_KEY = os.environ.get("FRED_KEY", "")
 FINNHUB_KEY = os.environ.get("FINNHUB_KEY", "")
+TD_KEY = os.environ.get("TD_KEY", "")
 
 last_month = (datetime.today() - timedelta(30)).strftime("%Y-%m-%d")
-morn_timestamp = int(
-    round(datetime.now().replace(hour=8, minute=0, second=0, microsecond=0).timestamp())
+open_timestamp = int(
+    round(
+        datetime.now().replace(hour=8, minute=30, second=0, microsecond=0).timestamp()
+    )
 )
 close_timestamp = int(
     round(
         datetime.now().replace(hour=15, minute=0, second=0, microsecond=0).timestamp()
+    )
+)
+am_timestamp = int(
+    round(datetime.now().replace(hour=0, minute=0, second=1, microsecond=0).timestamp())
+)
+pm_timestamp = int(
+    round(
+        datetime.now().replace(hour=23, minute=59, second=59, microsecond=0).timestamp()
     )
 )
 
@@ -28,14 +39,26 @@ def get_FH_data(stock):
         "token": FINNHUB_KEY,
         "symbol": stock,
         "resolution": 5,
-        "from": morn_timestamp,
+        "from": open_timestamp,
         "to": close_timestamp,
     }
-    response = requests.get(
+    fh_response = requests.get(
         f"https://finnhub.io/api/v1/stock/candle",
         params=payload,
     ).json()
-    return response
+    td_response = requests.get(
+        f"https://api.tdameritrade.com/v1/marketdata/quotes",
+        params={"apikey": TD_KEY, "symbol": stock},
+    ).json()
+
+    processed_values = {}
+    processed_values["timestamp"] = fh_response["t"]
+    processed_values["open"] = fh_response["o"]
+    processed_values["close"] = fh_response["c"]
+    processed_values["high"] = fh_response["h"]
+    processed_values["low"] = fh_response["l"]
+    processed_values["initial"] = td_response[stock]["openPrice"]
+    return processed_values
 
 
 @app.route("/api/FH/crypto/<symbol>")
@@ -44,14 +67,21 @@ def get_FH_crypto_data(symbol):
         "token": FINNHUB_KEY,
         "symbol": f"COINBASE:{symbol}-USD",
         "resolution": 5,
-        "from": morn_timestamp,
-        "to": close_timestamp,
+        "from": am_timestamp,
+        "to": pm_timestamp,
     }
-    response = requests.get(
+    fh_response = requests.get(
         f"https://finnhub.io/api/v1/crypto/candle",
         params=payload,
     ).json()
-    return response
+    processed_values = {}
+    processed_values["timestamp"] = fh_response["t"]
+    processed_values["open"] = fh_response["o"]
+    processed_values["close"] = fh_response["c"]
+    processed_values["high"] = fh_response["h"]
+    processed_values["low"] = fh_response["l"]
+    processed_values["initial"] = fh_response["o"][0]
+    return processed_values
 
 
 @app.route("/api/FRED")
