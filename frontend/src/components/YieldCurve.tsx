@@ -1,5 +1,11 @@
 import Plot from "react-plotly.js";
 import { useState, useEffect } from "react";
+import { Card, CardContent } from "@mui/material";
+
+interface YieldCurveProps {
+  width: number;
+  height: number;
+}
 
 interface TreasuryCurve {
   DGS1MO: string;
@@ -21,19 +27,35 @@ interface TreasuryCurve {
   DGS20_old: string;
   DGS30_old: string;
 }
+const initialState: TreasuryCurve = {
+  DGS1MO: "",
+  DGS3MO: "",
+  DGS6MO: "",
+  DGS1: "",
+  DGS2: "",
+  DGS5: "",
+  DGS10: "",
+  DGS20: "",
+  DGS30: "",
+  DGS1MO_old: "",
+  DGS3MO_old: "",
+  DGS6MO_old: "",
+  DGS1_old: "",
+  DGS2_old: "",
+  DGS5_old: "",
+  DGS10_old: "",
+  DGS20_old: "",
+  DGS30_old: "",
+};
 
-const YieldCurve: React.FC = () => {
-  const [currentChartData, setCurrentChartData] = useState<TreasuryCurve | any>(
-    {}
-  );
+const YieldCurve: React.FC<YieldCurveProps> = ({ width, height }) => {
+  const [currentChartData, setCurrentChartData] =
+    useState<TreasuryCurve>(initialState);
 
   useEffect(() => {
     const fredData = async () => {
       const response = await fetch(`/api/FRED`);
       const data = await response.json();
-      if (!data) {
-        return;
-      }
       setCurrentChartData({ ...data });
     };
     fredData();
@@ -53,56 +75,76 @@ const YieldCurve: React.FC = () => {
   const getYValue = (age: keyof TreasuryCurve) => {
     return `${currentChartData[age]}`;
   };
-
-  return (
-    <>
-      {currentChartData && (
-        <Plot
-          data={[
-            {
-              name: "Current",
-              mode: "lines+markers",
-              x: xAxis,
-              y: [
-                getYValue("DGS1MO"),
-                getYValue("DGS3MO"),
-                getYValue("DGS6MO"),
-                getYValue("DGS1"),
-                getYValue("DGS2"),
-                getYValue("DGS5"),
-                getYValue("DGS10"),
-                getYValue("DGS20"),
-                getYValue("DGS30"),
-              ],
-            },
-            {
-              name: "30 days ago",
-              mode: "lines+markers",
-              x: xAxis,
-              y: [
-                getYValue("DGS1MO_old"),
-                getYValue("DGS3MO_old"),
-                getYValue("DGS6MO_old"),
-                getYValue("DGS1_old"),
-                getYValue("DGS2_old"),
-                getYValue("DGS5_old"),
-                getYValue("DGS10_old"),
-                getYValue("DGS20_old"),
-                getYValue("DGS30_old"),
-              ],
-            },
-          ]}
-          layout={{
-            width: 500,
-            height: 300,
-            title: "Treasury Yield Spread",
-            showlegend: true,
-          }}
-          config={{ displayModeBar: false, scrollZoom: true }}
-        />
-      )}
-    </>
-  );
+  if (currentChartData.DGS1) {
+    return (
+      <Card variant="outlined" sx={{ maxWidth: `${width}px` }}>
+        <CardContent>
+          <Plot
+            data={[
+              {
+                name: "Current",
+                mode: "lines+markers",
+                x: xAxis,
+                y: [
+                  getYValue("DGS1MO"),
+                  getYValue("DGS3MO"),
+                  getYValue("DGS6MO"),
+                  getYValue("DGS1"),
+                  getYValue("DGS2"),
+                  getYValue("DGS5"),
+                  getYValue("DGS10"),
+                  getYValue("DGS20"),
+                  getYValue("DGS30"),
+                ],
+              },
+              {
+                name: "30 Days Prior",
+                mode: "lines+markers",
+                x: xAxis,
+                y: [
+                  getYValue("DGS1MO_old"),
+                  getYValue("DGS3MO_old"),
+                  getYValue("DGS6MO_old"),
+                  getYValue("DGS1_old"),
+                  getYValue("DGS2_old"),
+                  getYValue("DGS5_old"),
+                  getYValue("DGS10_old"),
+                  getYValue("DGS20_old"),
+                  getYValue("DGS30_old"),
+                ],
+              },
+            ]}
+            layout={{
+              width,
+              height,
+              title: "Treasury Yield Spread",
+              showlegend: true,
+              legend: {
+                x: 0,
+                y: 1,
+                xanchor: "left",
+              },
+              xaxis: {
+                automargin: true,
+              },
+              yaxis: {
+                automargin: true,
+              },
+              margin: {
+                t: 25,
+                l: 1,
+                r: 20,
+                b: 1,
+              },
+            }}
+            config={{ displayModeBar: false, scrollZoom: true }}
+          />
+        </CardContent>
+      </Card>
+    );
+  } else {
+    return <></>;
+  }
 };
 
 export default YieldCurve;

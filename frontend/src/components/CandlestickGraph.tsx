@@ -1,9 +1,12 @@
 import Plot from "react-plotly.js";
 import { useState, useEffect } from "react";
+import { Card, CardContent } from "@mui/material";
 
 interface CandlestickGraphProps {
   stock: string;
   crypto: boolean;
+  width: number;
+  height: number;
 }
 interface StockData {
   timestamp: number[];
@@ -25,6 +28,8 @@ const initialState: StockData = {
 const CandlestickGraph: React.FC<CandlestickGraphProps> = ({
   stock,
   crypto,
+  width,
+  height,
 }) => {
   const [currentChartData, setCurrentChartData] =
     useState<StockData>(initialState);
@@ -38,9 +43,12 @@ const CandlestickGraph: React.FC<CandlestickGraphProps> = ({
     getStockData();
   }, [stock, crypto]);
 
-  if (currentChartData.timestamp) {
+  if (currentChartData.timestamp.length > 1) {
     const timeArray = currentChartData.timestamp.map((num) =>
-      new Date(num * 1000).toLocaleTimeString("en-us")
+      new Date(num * 1000).toLocaleTimeString("en-us", {
+        hour: "2-digit",
+        minute: "2-digit",
+      })
     );
     const date = new Date(
       currentChartData.timestamp[0] * 1000
@@ -50,54 +58,66 @@ const CandlestickGraph: React.FC<CandlestickGraphProps> = ({
       currentChartData.initial;
     const currentGain = (valueDiff / currentChartData.initial) * 100;
     return (
-      <div>
-        <Plot
-          data={[
-            {
-              type: "candlestick",
-              x: timeArray,
-              close: currentChartData.close,
-              high: currentChartData.high,
-              open: currentChartData.open,
-              low: currentChartData.low,
+      <Card variant="outlined" sx={{ maxWidth: `${width}px` }}>
+        <CardContent>
+          <Plot
+            data={[
+              {
+                type: "candlestick",
+                x: timeArray,
+                close: currentChartData.close,
+                high: currentChartData.high,
+                open: currentChartData.open,
+                low: currentChartData.low,
+              },
+              {
+                mode: "lines",
+                x: timeArray,
+                y: Array(currentChartData.timestamp.length).fill(
+                  currentChartData.initial
+                ),
+                name: "Open Price",
+                line: {
+                  dash: "dot",
+                },
+                hoverinfo: "skip",
+              },
+            ]}
+            layout={{
               showlegend: false,
-            },
-            {
-              mode: "lines",
-              x: timeArray,
-              y: Array(currentChartData.timestamp.length).fill(
-                currentChartData.initial
-              ),
-              name: "Open Price",
-              line: {
-                dash: "dot",
+              width: width,
+              height: height,
+              title: `${stock} Candlestick ${date}`,
+              xaxis: {
+                nticks: 6,
+                automargin: true,
+                rangeslider: {
+                  visible: false,
+                },
               },
-            },
-          ]}
-          layout={{
-            width: 800,
-            height: 600,
-            title: `${stock} Candlestick ${date}`,
-            xaxis: {
-              nticks: 8,
-              automargin: true,
-              rangeslider: {
-                visible: false,
+              yaxis: {
+                automargin: true,
               },
-            },
-          }}
-          config={{ displayModeBar: false, scrollZoom: true }}
-        />
-        {currentGain > 0 ? (
-          <div style={{ color: "green" }}>
-            {valueDiff.toFixed(2)} {currentGain.toFixed(2)}%
-          </div>
-        ) : (
-          <div style={{ color: "red" }}>
-            {valueDiff.toFixed(2)} {currentGain.toFixed(2)}%
-          </div>
-        )}
-      </div>
+              margin: {
+                t: 25,
+                l: 1,
+                r: 20,
+                b: 1,
+              },
+            }}
+            config={{ displayModeBar: false, scrollZoom: true }}
+          />
+          {currentGain > 0 ? (
+            <div style={{ color: "green", textAlign: "right" }}>
+              {valueDiff.toFixed(2)} {currentGain.toFixed(2)}%
+            </div>
+          ) : (
+            <div style={{ color: "red", textAlign: "right" }}>
+              {valueDiff.toFixed(2)} {currentGain.toFixed(2)}%
+            </div>
+          )}
+        </CardContent>
+      </Card>
     );
   } else {
     return <></>;
