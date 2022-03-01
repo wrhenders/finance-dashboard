@@ -79,7 +79,7 @@ const YieldCurve: React.FC<YieldCurveProps> = ({ width, height }) => {
     return (
       <Card
         variant="outlined"
-        sx={{ maxWidth: `${width}px`, p: 2, mt: 4, mb: 4 }}
+        sx={{ maxWidth: `${width}px`, p: 2, mt: 2, ml: 2 }}
       >
         <CardContent>
           <Plot

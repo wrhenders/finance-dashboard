@@ -60,7 +60,7 @@ const CandlestickGraph: React.FC<CandlestickGraphProps> = ({
     return (
       <Card
         variant="outlined"
-        sx={{ maxWidth: `${width}px`, p: 2, mt: 4, mb: 4, pb: 0, pt: 0 }}
+        sx={{ maxWidth: `${width}px`, p: 2, mt: 2, ml: 2, pb: 0, pt: 0 }}
       >
         <CardContent>
           {currentGain > 0 ? (

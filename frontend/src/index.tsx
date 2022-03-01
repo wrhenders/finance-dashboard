@@ -18,7 +18,7 @@ const App = () => {
       }}
     >
       <HeaderBar />
-      <Grid container spacing={2}>
+      <Grid container>
         <Grid item xs="auto">
           <YieldCurve width={380} height={240} />
         </Grid>
