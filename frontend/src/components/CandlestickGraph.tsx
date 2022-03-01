@@ -1,6 +1,6 @@
 import Plot from "react-plotly.js";
 import { useState, useEffect } from "react";
-import { Card, CardContent } from "@mui/material";
+import { Card, CardContent, Typography } from "@mui/material";
 
 interface CandlestickGraphProps {
   stock: string;
@@ -58,8 +58,40 @@ const CandlestickGraph: React.FC<CandlestickGraphProps> = ({
       currentChartData.initial;
     const currentGain = (valueDiff / currentChartData.initial) * 100;
     return (
-      <Card variant="outlined" sx={{ maxWidth: `${width}px` }}>
+      <Card
+        variant="outlined"
+        sx={{ maxWidth: `${width}px`, p: 2, mt: 4, mb: 4, pb: 0, pt: 0 }}
+      >
         <CardContent>
+          {currentGain > 0 ? (
+            <div style={{ display: "flex" }}>
+              <Typography variant="h6" component="div">
+                {stock} {date}
+              </Typography>
+              <Typography
+                variant="h6"
+                component="div"
+                color="green"
+                sx={{ marginLeft: "auto" }}
+              >
+                {valueDiff.toFixed(2)} {currentGain.toFixed(2)}%
+              </Typography>
+            </div>
+          ) : (
+            <div style={{ display: "flex" }}>
+              <Typography variant="h6" component="div">
+                {stock} {date}
+              </Typography>
+              <Typography
+                variant="h6"
+                component="div"
+                color="red"
+                sx={{ marginLeft: "auto" }}
+              >
+                {valueDiff.toFixed(2)} {currentGain.toFixed(2)}%
+              </Typography>
+            </div>
+          )}
           <Plot
             data={[
               {
@@ -87,7 +119,6 @@ const CandlestickGraph: React.FC<CandlestickGraphProps> = ({
               showlegend: false,
               width: width,
               height: height,
-              title: `${stock} Candlestick ${date}`,
               xaxis: {
                 nticks: 6,
                 automargin: true,
@@ -99,7 +130,7 @@ const CandlestickGraph: React.FC<CandlestickGraphProps> = ({
                 automargin: true,
               },
               margin: {
-                t: 25,
+                t: 1,
                 l: 1,
                 r: 20,
                 b: 1,
@@ -107,15 +138,6 @@ const CandlestickGraph: React.FC<CandlestickGraphProps> = ({
             }}
             config={{ displayModeBar: false, scrollZoom: true }}
           />
-          {currentGain > 0 ? (
-            <div style={{ color: "green", textAlign: "right" }}>
-              {valueDiff.toFixed(2)} {currentGain.toFixed(2)}%
-            </div>
-          ) : (
-            <div style={{ color: "red", textAlign: "right" }}>
-              {valueDiff.toFixed(2)} {currentGain.toFixed(2)}%
-            </div>
-          )}
         </CardContent>
       </Card>
     );

@@ -77,7 +77,10 @@ const YieldCurve: React.FC<YieldCurveProps> = ({ width, height }) => {
   };
   if (currentChartData.DGS1) {
     return (
-      <Card variant="outlined" sx={{ maxWidth: `${width}px` }}>
+      <Card
+        variant="outlined"
+        sx={{ maxWidth: `${width}px`, p: 2, mt: 4, mb: 4 }}
+      >
         <CardContent>
           <Plot
             data={[
