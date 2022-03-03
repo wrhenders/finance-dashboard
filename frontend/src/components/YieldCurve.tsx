@@ -1,6 +1,6 @@
 import Plot from "react-plotly.js";
 import { useState, useEffect } from "react";
-import { Card, CardContent } from "@mui/material";
+import { Card, CardContent, Typography } from "@mui/material";
 
 interface YieldCurveProps {
   width: number;
@@ -86,9 +86,12 @@ const YieldCurve: React.FC<YieldCurveProps> = ({ width, height }) => {
     return (
       <Card
         variant="outlined"
-        sx={{ maxWidth: `${width}px`, p: 2, mt: 2, ml: 2 }}
+        sx={{ maxWidth: `${width}px`, p: 2, mt: 2, ml: 2, pb: 0, pt: 0 }}
       >
         <CardContent>
+          <Typography variant="h6" component="div">
+            Treasury Yield Spread
+          </Typography>
           <Plot
             data={[
               {
@@ -127,7 +130,6 @@ const YieldCurve: React.FC<YieldCurveProps> = ({ width, height }) => {
             layout={{
               width,
               height,
-              title: "Treasury Yield Spread",
               showlegend: true,
               legend: {
                 x: 0,
@@ -141,7 +143,7 @@ const YieldCurve: React.FC<YieldCurveProps> = ({ width, height }) => {
                 automargin: true,
               },
               margin: {
-                t: 25,
+                t: 1,
                 l: 1,
                 r: 20,
                 b: 1,
