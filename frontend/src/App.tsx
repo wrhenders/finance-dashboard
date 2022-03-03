@@ -1,13 +1,17 @@
 import { useState } from "react";
-import YieldCurve from "./components/YieldCurve";
-import CandlestickGraph from "./components/CandlestickGraph";
-import { Grid, Box, Toolbar } from "@mui/material";
+import { Box } from "@mui/material";
 import HeaderBar from "./components/HeaderBar";
 import LeftDrawer from "./components/LeftDrawer";
+import Charts from "./components/Charts";
 
 const App = () => {
   const [toggleDrawer, setToggleDrawer] = useState(false);
+  const [tickerList, setTickerList] = useState<string[]>([]);
+
   const handleDrawerToggle = () => setToggleDrawer(!toggleDrawer);
+  const handleSubmit = (ticker: string) => {
+    setTickerList([ticker, ...tickerList]);
+  };
 
   return (
     <Box
@@ -20,43 +24,12 @@ const App = () => {
       }}
     >
       <HeaderBar toggleOpen={handleDrawerToggle} />
-      <LeftDrawer open={toggleDrawer} />
-      <Grid
-        container
-        sx={{
-          width: toggleDrawer ? "calc(100% - 240px)" : "100%",
-          marginLeft: toggleDrawer ? "240px" : "0px",
-          transitionDuration: "200ms",
-        }}
-      >
-        <Grid item xs="auto">
-          <YieldCurve width={380} height={240} />
-        </Grid>
-        <Grid item xs="auto">
-          <CandlestickGraph
-            stock="SPY"
-            crypto={false}
-            width={380}
-            height={240}
-          />
-        </Grid>
-        <Grid item xs="auto">
-          <CandlestickGraph
-            stock="QQQ"
-            crypto={false}
-            width={380}
-            height={240}
-          />
-        </Grid>
-        <Grid item xs="auto">
-          <CandlestickGraph
-            stock="BTC"
-            crypto={true}
-            width={380}
-            height={240}
-          />
-        </Grid>
-      </Grid>
+      <LeftDrawer
+        open={toggleDrawer}
+        tickerList={tickerList}
+        handleSubmit={handleSubmit}
+      />
+      <Charts drawerOpen={toggleDrawer} tickerList={tickerList} />
     </Box>
   );
 };
