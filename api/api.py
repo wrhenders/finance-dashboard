@@ -13,6 +13,18 @@ POLY_KEY = os.environ.get("POLY_KEY", "")
 app = Flask.Flask(__name__)
 
 
+@app.route("/api/current/<stock>")
+def get_current_data(stock):
+    td_response = requests.get(
+        f"https://api.tdameritrade.com/v1/marketdata/{stock}/quotes",
+        params={"apikey": TD_KEY},
+    ).json()
+    return {
+        "prevClose": td_response[stock]["closePrice"],
+        "current": td_response[stock]["lastPrice"],
+    }
+
+
 @app.route("/api/candle/<stock>")
 def get_candle_data(stock):
     open_timestamp = get_timestamp("open")

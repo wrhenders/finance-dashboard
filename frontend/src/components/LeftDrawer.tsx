@@ -1,13 +1,6 @@
 import { useState } from "react";
-import {
-  Drawer,
-  List,
-  Toolbar,
-  Divider,
-  ListItem,
-  Typography,
-  TextField,
-} from "@mui/material";
+import DrawerCard from "./DrawerCard";
+import { Drawer, List, Toolbar, Divider, TextField } from "@mui/material";
 
 interface LeftDrawerProps {
   open: boolean;
@@ -23,24 +16,7 @@ const LeftDrawer: React.FC<LeftDrawerProps> = ({
   const [input, setInput] = useState("");
   const createList = () => {
     return tickerList.map((ticker) => {
-      return (
-        <div key={`${ticker}_h`}>
-          <ListItem>
-            <Typography variant="h6" component="div">
-              {ticker}
-            </Typography>
-            <Typography
-              variant="h6"
-              component="div"
-              color="green"
-              sx={{ marginLeft: "auto" }}
-            >
-              2.0%
-            </Typography>
-          </ListItem>
-          <Divider />
-        </div>
-      );
+      return <DrawerCard key={`${ticker}_h`} stock={ticker} />;
     });
   };
 
