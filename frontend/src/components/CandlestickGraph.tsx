@@ -34,16 +34,21 @@ const CandlestickGraph: React.FC<CandlestickGraphProps> = ({
   const [currentChartData, setCurrentChartData] =
     useState<StockData>(initialState);
   useEffect(() => {
-    const getStockData = async () => {
-      const data = await fetch(
-        `/api/FH/${crypto ? "crypto/" : ""}${stock}`
-      ).then((response) => response.json());
-      setCurrentChartData(data);
-    };
-    getStockData();
-  }, [stock, crypto]);
+    fetch(`/api/candle/${crypto ? "crypto/" : ""}${stock}`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Stock not found");
+        }
+        return response;
+      })
+      .then((response) => response.json())
+      .then((response) => setCurrentChartData(response))
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
-  if (currentChartData.timestamp.length > 1) {
+  if (currentChartData.timestamp.length >= 1) {
     const timeArray = currentChartData.timestamp.map((num) =>
       new Date(num * 1000).toLocaleTimeString("en-us", {
         hour: "2-digit",

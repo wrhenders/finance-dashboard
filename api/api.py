@@ -1,40 +1,22 @@
 import os
 import requests
 from dotenv import load_dotenv
-from datetime import datetime, timedelta
-import json
+from get_time import get_timestamp
 import flask as Flask
 
 load_dotenv(dotenv_path="./.env.local")
 FRED_KEY = os.environ.get("FRED_KEY", "")
 FINNHUB_KEY = os.environ.get("FINNHUB_KEY", "")
 TD_KEY = os.environ.get("TD_KEY", "")
-
-last_month = (datetime.today() - timedelta(30)).strftime("%Y-%m-%d")
-open_timestamp = int(
-    round(
-        datetime.now().replace(hour=8, minute=30, second=0, microsecond=0).timestamp()
-    )
-)
-close_timestamp = int(
-    round(
-        datetime.now().replace(hour=15, minute=0, second=0, microsecond=0).timestamp()
-    )
-)
-am_timestamp = int(
-    round(datetime.now().replace(hour=0, minute=0, second=1, microsecond=0).timestamp())
-)
-pm_timestamp = int(
-    round(
-        datetime.now().replace(hour=23, minute=59, second=59, microsecond=0).timestamp()
-    )
-)
+POLY_KEY = os.environ.get("POLY_KEY", "")
 
 app = Flask.Flask(__name__)
 
 
-@app.route("/api/FH/<stock>")
-def get_FH_data(stock):
+@app.route("/api/candle/<stock>")
+def get_candle_data(stock):
+    open_timestamp = get_timestamp("open")
+    close_timestamp = get_timestamp("close")
     payload = {
         "token": FINNHUB_KEY,
         "symbol": stock,
@@ -46,9 +28,9 @@ def get_FH_data(stock):
         f"https://finnhub.io/api/v1/stock/candle",
         params=payload,
     ).json()
-    td_response = requests.get(
-        f"https://api.tdameritrade.com/v1/marketdata/quotes",
-        params={"apikey": TD_KEY, "symbol": stock},
+    poly_response = requests.get(
+        f"https://api.polygon.io/v2/aggs/ticker/{stock}/prev",
+        params={"apiKey": POLY_KEY},
     ).json()
 
     processed_values = {}
@@ -57,12 +39,14 @@ def get_FH_data(stock):
     processed_values["close"] = fh_response["c"]
     processed_values["high"] = fh_response["h"]
     processed_values["low"] = fh_response["l"]
-    processed_values["initial"] = td_response[stock]["openPrice"]
+    processed_values["initial"] = poly_response["results"][0]["c"]
     return processed_values
 
 
-@app.route("/api/FH/crypto/<symbol>")
-def get_FH_crypto_data(symbol):
+@app.route("/api/candle/crypto/<symbol>")
+def get_candle_crypto_data(symbol):
+    am_timestamp = get_timestamp("am")
+    pm_timestamp = get_timestamp("pm")
     payload = {
         "token": FINNHUB_KEY,
         "symbol": f"COINBASE:{symbol}-USD",
@@ -86,6 +70,7 @@ def get_FH_crypto_data(symbol):
 
 @app.route("/api/FRED")
 def get_FRED_data():
+    last_month = get_timestamp("last_month")
 
     one_month = "DGS1MO"
     three_month = "DGS3MO"

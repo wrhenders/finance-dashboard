@@ -53,13 +53,20 @@ const YieldCurve: React.FC<YieldCurveProps> = ({ width, height }) => {
     useState<TreasuryCurve>(initialState);
 
   useEffect(() => {
-    const fredData = async () => {
-      const response = await fetch(`/api/FRED`);
-      const data = await response.json();
-      setCurrentChartData({ ...data });
-    };
-    fredData();
+    fetch(`/api/FRED`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Stock not found");
+        }
+        return response;
+      })
+      .then((response) => response.json())
+      .then((response) => setCurrentChartData(response))
+      .catch((err) => {
+        console.log(err);
+      });
   }, []);
+
   const xAxis = [
     "1 Mo",
     "3 Mo",
