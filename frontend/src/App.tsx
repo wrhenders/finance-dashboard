@@ -7,10 +7,14 @@ import Charts from "./components/Charts";
 const App = () => {
   const [toggleDrawer, setToggleDrawer] = useState(false);
   const [tickerList, setTickerList] = useState<string[]>([]);
+  const [cryptoList, setCryptoList] = useState<string[]>([]);
 
   const handleDrawerToggle = () => setToggleDrawer(!toggleDrawer);
   const handleSubmit = (ticker: string) => {
     setTickerList([ticker, ...tickerList]);
+  };
+  const handleCryptoSubmit = (ticker: string) => {
+    setCryptoList([ticker, ...cryptoList]);
   };
 
   return (
@@ -27,9 +31,15 @@ const App = () => {
       <LeftDrawer
         open={toggleDrawer}
         tickerList={tickerList}
+        cryptoList={cryptoList}
         handleSubmit={handleSubmit}
+        handleCryptoSubmit={handleCryptoSubmit}
       />
-      <Charts drawerOpen={toggleDrawer} tickerList={tickerList} />
+      <Charts
+        drawerOpen={toggleDrawer}
+        tickerList={tickerList}
+        cryptoList={cryptoList}
+      />
     </Box>
   );
 };

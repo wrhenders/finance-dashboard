@@ -3,6 +3,7 @@ import { Divider, ListItem, Typography } from "@mui/material";
 
 interface DrawerCardProps {
   stock: string;
+  crypto: boolean;
 }
 
 interface StockData {
@@ -15,11 +16,33 @@ const initialState: StockData = {
   prevClose: 0,
 };
 
-const DrawerCard: React.FC<DrawerCardProps> = ({ stock }) => {
-  const [currentData, setCurrentData] = useState(initialState);
+interface CryptoData {
+  timestamp: number[];
+  close: number[];
+  high: number[];
+  low: number[];
+  open: number[];
+  initial: number;
+}
+const initialCryptoState: CryptoData = {
+  timestamp: [],
+  close: [],
+  high: [],
+  low: [],
+  open: [],
+  initial: 0,
+};
+
+const DrawerCard: React.FC<DrawerCardProps> = ({ stock, crypto }) => {
+  const [currentData, setCurrentData] = useState<StockData>(Object);
+  const [currentCryptoData, setCurrentCryptoData] =
+    useState<CryptoData>(initialCryptoState);
 
   useEffect(() => {
-    fetch(`/api/current/${stock}`)
+    const url = crypto
+      ? `/api/candle/crypto/${stock}`
+      : `/api/current/${stock}`;
+    fetch(url)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Stock not found");
@@ -27,45 +50,40 @@ const DrawerCard: React.FC<DrawerCardProps> = ({ stock }) => {
         return response;
       })
       .then((response) => response.json())
-      .then((response) => setCurrentData(response))
+      .then((response) =>
+        crypto ? setCurrentCryptoData(response) : setCurrentData(response)
+      )
       .catch((err) => {
         console.log(err);
       });
-  }, []);
-  const valueDiff = currentData.current - currentData.prevClose;
-  const currentGain = (valueDiff / currentData.prevClose) * 100;
+  }, [crypto, stock]);
+  let valueDiff: number;
+  let currentGain: number;
+  if (currentData.current) {
+    valueDiff = currentData.current - currentData.prevClose;
+    currentGain = (valueDiff / currentData.prevClose) * 100;
+  } else {
+    valueDiff =
+      currentCryptoData.close[currentCryptoData.close.length - 1] -
+      currentCryptoData.initial;
+    currentGain = (valueDiff / currentCryptoData.initial) * 100;
+  }
 
   return (
     <>
-      {currentGain > 0 ? (
-        <ListItem sx={{ display: "flex" }}>
-          <Typography variant="h6" component="div">
-            {stock}
-          </Typography>
-          <Typography
-            variant="h6"
-            component="div"
-            color="green"
-            sx={{ marginLeft: "auto" }}
-          >
-            {valueDiff.toFixed(2)} {currentGain.toFixed(2)}%
-          </Typography>
-        </ListItem>
-      ) : (
-        <ListItem sx={{ display: "flex" }}>
-          <Typography variant="h6" component="div" align="left">
-            {stock}
-          </Typography>
-          <Typography
-            variant="h6"
-            component="div"
-            color="red"
-            sx={{ marginLeft: "auto" }}
-          >
-            {valueDiff.toFixed(2)} {currentGain.toFixed(2)}%
-          </Typography>
-        </ListItem>
-      )}
+      <ListItem sx={{ display: "flex" }}>
+        <Typography variant="h6" component="div">
+          {stock}
+        </Typography>
+        <Typography
+          variant="h6"
+          component="div"
+          color={currentGain > 0 ? "green" : "red"}
+          sx={{ marginLeft: "auto" }}
+        >
+          {valueDiff.toFixed(2)} {currentGain.toFixed(2)}%
+        </Typography>
+      </ListItem>
       <Divider />
     </>
   );

@@ -5,9 +5,14 @@ import { Grid } from "@mui/material";
 interface ChartProps {
   drawerOpen: boolean;
   tickerList: string[];
+  cryptoList: string[];
 }
 
-const Charts: React.FC<ChartProps> = ({ drawerOpen, tickerList }) => {
+const Charts: React.FC<ChartProps> = ({
+  drawerOpen,
+  tickerList,
+  cryptoList,
+}) => {
   const createCharts = () => {
     return tickerList.map((ticker) => {
       return (
@@ -15,6 +20,20 @@ const Charts: React.FC<ChartProps> = ({ drawerOpen, tickerList }) => {
           <CandlestickGraph
             stock={ticker}
             crypto={false}
+            width={380}
+            height={240}
+          />
+        </Grid>
+      );
+    });
+  };
+  const createCryptoCharts = () => {
+    return cryptoList.map((ticker) => {
+      return (
+        <Grid item xs="auto" key={ticker}>
+          <CandlestickGraph
+            stock={ticker}
+            crypto={true}
             width={380}
             height={240}
           />
@@ -36,9 +55,7 @@ const Charts: React.FC<ChartProps> = ({ drawerOpen, tickerList }) => {
         <YieldCurve width={380} height={240} />
       </Grid>
       {createCharts()}
-      <Grid item xs="auto">
-        <CandlestickGraph stock="BTC" crypto={true} width={380} height={240} />
-      </Grid>
+      {createCryptoCharts()}
     </Grid>
   );
 };

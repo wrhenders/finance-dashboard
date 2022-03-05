@@ -46,7 +46,7 @@ const CandlestickGraph: React.FC<CandlestickGraphProps> = ({
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  }, [crypto, stock]);
 
   if (currentChartData.timestamp.length >= 1) {
     const timeArray = currentChartData.timestamp.map((num) =>
@@ -68,35 +68,19 @@ const CandlestickGraph: React.FC<CandlestickGraphProps> = ({
         sx={{ maxWidth: `${width}px`, p: 2, mt: 2, ml: 2, pb: 0, pt: 0 }}
       >
         <CardContent>
-          {currentGain > 0 ? (
-            <div style={{ display: "flex" }}>
-              <Typography variant="h6" component="div">
-                {stock} {date}
-              </Typography>
-              <Typography
-                variant="h6"
-                component="div"
-                color="green"
-                sx={{ marginLeft: "auto" }}
-              >
-                {valueDiff.toFixed(2)} {currentGain.toFixed(2)}%
-              </Typography>
-            </div>
-          ) : (
-            <div style={{ display: "flex" }}>
-              <Typography variant="h6" component="div">
-                {stock} {date}
-              </Typography>
-              <Typography
-                variant="h6"
-                component="div"
-                color="red"
-                sx={{ marginLeft: "auto" }}
-              >
-                {valueDiff.toFixed(2)} {currentGain.toFixed(2)}%
-              </Typography>
-            </div>
-          )}
+          <div style={{ display: "flex" }}>
+            <Typography variant="h6" component="div">
+              {stock} {date}
+            </Typography>
+            <Typography
+              variant="h6"
+              component="div"
+              color={currentGain > 0 ? "green" : "red"}
+              sx={{ marginLeft: "auto" }}
+            >
+              {valueDiff.toFixed(2)} {currentGain.toFixed(2)}%
+            </Typography>
+          </div>
           <Plot
             data={[
               {
