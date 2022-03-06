@@ -81,7 +81,9 @@ const DrawerCard: React.FC<DrawerCardProps> = ({ stock, crypto }) => {
           color={currentGain > 0 ? "green" : "red"}
           sx={{ marginLeft: "auto" }}
         >
-          {valueDiff.toFixed(2)} {currentGain.toFixed(2)}%
+          {valueDiff
+            ? `${valueDiff.toFixed(2)} ${currentGain.toFixed(2)}%`
+            : "Not Found"}
         </Typography>
       </ListItem>
       <Divider />

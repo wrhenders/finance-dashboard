@@ -11,9 +11,15 @@ const App = () => {
 
   const handleDrawerToggle = () => setToggleDrawer(!toggleDrawer);
   const handleSubmit = (ticker: string) => {
+    if (tickerList.includes(ticker)) {
+      return;
+    }
     setTickerList([ticker, ...tickerList]);
   };
   const handleCryptoSubmit = (ticker: string) => {
+    if (cryptoList.includes(ticker)) {
+      return;
+    }
     setCryptoList([ticker, ...cryptoList]);
   };
 
