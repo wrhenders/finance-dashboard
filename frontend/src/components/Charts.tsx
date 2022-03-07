@@ -8,11 +8,7 @@ interface ChartProps {
   cryptoList: string[];
 }
 
-const Charts: React.FC<ChartProps> = ({
-  drawerOpen,
-  tickerList,
-  cryptoList,
-}) => {
+const Charts: React.FC<ChartProps> = ({ tickerList, cryptoList }) => {
   const createCharts = () => {
     return tickerList.map((ticker) => {
       return (

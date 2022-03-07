@@ -3,6 +3,8 @@ from datetime import datetime, timedelta
 
 def get_timestamp(type):
     return {
+        "five_days_ago": (datetime.today() - timedelta(5)).strftime("%Y-%m-%d"),
+        "today": datetime.today().strftime("%Y-%m-%d"),
         "last_month": (datetime.today() - timedelta(30)).strftime("%Y-%m-%d"),
         "open": int(
             round(
