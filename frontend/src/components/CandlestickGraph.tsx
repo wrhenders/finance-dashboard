@@ -4,7 +4,7 @@ import { Card, CardContent, Typography, ButtonBase } from "@mui/material";
 import { Link } from "react-router-dom";
 
 interface CandlestickGraphProps {
-  stock: string;
+  stock?: string;
   crypto: boolean;
   width: number;
   height: number;
@@ -66,11 +66,22 @@ const CandlestickGraph: React.FC<CandlestickGraphProps> = ({
     return (
       <Card
         variant="outlined"
-        sx={{ maxWidth: `${width}px`, p: 2, mt: 2, ml: 2, pb: 0, pt: 0 }}
+        sx={{
+          maxWidth: `${width}px`,
+          maxHeight: `${width * 0.84}px`,
+          p: 2,
+          mt: 2,
+          ml: 2,
+          pb: 0,
+          pt: 0,
+        }}
       >
         <CardContent>
           <div style={{ display: "flex" }}>
-            <ButtonBase component={Link} to={`/ticker/${stock}`}>
+            <ButtonBase
+              component={Link}
+              to={crypto ? `/ticker/${stock}/crypto` : `/ticker/${stock}`}
+            >
               <Typography variant="h6" component="div">
                 {stock} {date}
               </Typography>

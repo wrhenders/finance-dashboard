@@ -96,7 +96,7 @@ const DrawerCard: React.FC<DrawerCardProps> = ({
       >
         <Button
           component={Link}
-          to={`/ticker/${stock}`}
+          to={crypto ? `/ticker/${stock}/true` : `/ticker/${stock}`}
           sx={{ textTransform: "none", paddingLeft: 0 }}
         >
           <Typography variant="h6" component="div">

@@ -67,7 +67,10 @@ const App = () => {
               />
             }
           />
-          <Route path="/ticker/:symbol" element={<SingleName />} />
+          <Route path="/ticker/:symbol/">
+            <Route path="" element={<SingleName />} />
+            <Route path=":crypto" element={<SingleName />} />
+          </Route>
         </Routes>
       </Grid>
     </Box>
