@@ -1,5 +1,12 @@
 import { useState, useEffect } from "react";
-import { Divider, ListItem, Typography, IconButton } from "@mui/material";
+import { Link } from "react-router-dom";
+import {
+  Divider,
+  ListItem,
+  Typography,
+  IconButton,
+  Button,
+} from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 interface DrawerCardProps {
@@ -87,9 +94,15 @@ const DrawerCard: React.FC<DrawerCardProps> = ({
         onMouseOut={handleMouseOut}
         sx={{ display: "flex" }}
       >
-        <Typography variant="h6" component="div">
-          {stock}
-        </Typography>
+        <Button
+          component={Link}
+          to={`/ticker/${stock}`}
+          sx={{ textTransform: "none", paddingLeft: 0 }}
+        >
+          <Typography variant="h6" component="div">
+            {stock}
+          </Typography>
+        </Button>
         {showButton ? (
           <IconButton
             onClick={(e) => handleDelete(stock)}

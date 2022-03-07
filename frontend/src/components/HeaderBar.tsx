@@ -1,7 +1,5 @@
-import AppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
-import IconButton from "@mui/material/IconButton";
+import { AppBar, Toolbar, Typography, IconButton, Button } from "@mui/material";
+import { Link } from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu";
 
 interface ButtonAppBarProps {
@@ -22,9 +20,15 @@ const ButtonAppBar: React.FC<ButtonAppBarProps> = ({ toggleOpen }) => {
         >
           <MenuIcon />
         </IconButton>
-        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-          Finance Dashboard
-        </Typography>
+        <Button component={Link} to={"/"} sx={{ textTransform: "none" }}>
+          <Typography
+            variant="h6"
+            component="div"
+            sx={{ flexGrow: 1, color: "white" }}
+          >
+            Finance Dashboard
+          </Typography>
+        </Button>
       </Toolbar>
     </AppBar>
   );

@@ -43,20 +43,13 @@ const Charts: React.FC<ChartProps> = ({
   };
 
   return (
-    <Grid
-      container
-      sx={{
-        width: drawerOpen ? "calc(100% - 240px)" : "100%",
-        marginLeft: drawerOpen ? "240px" : "0px",
-        transitionDuration: "200ms",
-      }}
-    >
+    <>
       <Grid item xs="auto">
         <YieldCurve width={380} height={240} />
       </Grid>
       {createCharts()}
       {createCryptoCharts()}
-    </Grid>
+    </>
   );
 };
 

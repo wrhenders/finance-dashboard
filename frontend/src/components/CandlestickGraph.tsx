@@ -1,6 +1,7 @@
 import Plot from "react-plotly.js";
 import { useState, useEffect } from "react";
-import { Card, CardContent, Typography } from "@mui/material";
+import { Card, CardContent, Typography, ButtonBase } from "@mui/material";
+import { Link } from "react-router-dom";
 
 interface CandlestickGraphProps {
   stock: string;
@@ -69,9 +70,11 @@ const CandlestickGraph: React.FC<CandlestickGraphProps> = ({
       >
         <CardContent>
           <div style={{ display: "flex" }}>
-            <Typography variant="h6" component="div">
-              {stock} {date}
-            </Typography>
+            <ButtonBase component={Link} to={`/ticker/${stock}`}>
+              <Typography variant="h6" component="div">
+                {stock} {date}
+              </Typography>
+            </ButtonBase>
             <Typography
               variant="h6"
               component="div"
