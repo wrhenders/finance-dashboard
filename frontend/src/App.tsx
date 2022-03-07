@@ -6,8 +6,8 @@ import Charts from "./components/Charts";
 
 const App = () => {
   const [toggleDrawer, setToggleDrawer] = useState(false);
-  const [tickerList, setTickerList] = useState<string[]>([]);
-  const [cryptoList, setCryptoList] = useState<string[]>([]);
+  const [tickerList, setTickerList] = useState<string[]>(["SPY", "QQQ"]);
+  const [cryptoList, setCryptoList] = useState<string[]>(["BTC", "ETH"]);
 
   const handleDrawerToggle = () => setToggleDrawer(!toggleDrawer);
   const handleSubmit = (ticker: string) => {
@@ -21,6 +21,10 @@ const App = () => {
       return;
     }
     setCryptoList([ticker, ...cryptoList]);
+  };
+  const handleDelete = (ticker: string) => {
+    setTickerList(tickerList.filter((stock) => stock !== ticker));
+    setCryptoList(cryptoList.filter((stock) => stock !== ticker));
   };
 
   return (
@@ -40,6 +44,7 @@ const App = () => {
         cryptoList={cryptoList}
         handleSubmit={handleSubmit}
         handleCryptoSubmit={handleCryptoSubmit}
+        handleDelete={handleDelete}
       />
       <Charts
         drawerOpen={toggleDrawer}

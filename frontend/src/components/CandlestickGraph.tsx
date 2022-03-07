@@ -44,7 +44,7 @@ const CandlestickGraph: React.FC<CandlestickGraphProps> = ({
       .then((response) => response.json())
       .then((response) => setCurrentChartData(response))
       .catch((err) => {
-        console.log(err);
+        //console.log(err);
       });
   }, [crypto, stock]);
 

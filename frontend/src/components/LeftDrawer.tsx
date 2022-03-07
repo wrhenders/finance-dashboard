@@ -8,6 +8,7 @@ interface LeftDrawerProps {
   cryptoList: string[];
   handleSubmit: (ticker: string) => void;
   handleCryptoSubmit: (ticker: string) => void;
+  handleDelete: (ticker: string) => void;
 }
 
 const LeftDrawer: React.FC<LeftDrawerProps> = ({
@@ -15,18 +16,33 @@ const LeftDrawer: React.FC<LeftDrawerProps> = ({
   tickerList,
   cryptoList,
   handleSubmit,
+  handleDelete,
   handleCryptoSubmit,
 }) => {
   const [input, setInput] = useState("");
   const [cryptoInput, setCryptoInput] = useState("");
   const createList = () => {
     return tickerList.map((ticker) => {
-      return <DrawerCard key={`${ticker}_h`} stock={ticker} crypto={false} />;
+      return (
+        <DrawerCard
+          key={`${ticker}_h`}
+          stock={ticker}
+          crypto={false}
+          handleDelete={handleDelete}
+        />
+      );
     });
   };
   const createCryptoList = () => {
     return cryptoList.map((ticker) => {
-      return <DrawerCard key={`${ticker}_c`} stock={ticker} crypto={true} />;
+      return (
+        <DrawerCard
+          key={`${ticker}_c`}
+          stock={ticker}
+          crypto={true}
+          handleDelete={handleDelete}
+        />
+      );
     });
   };
 

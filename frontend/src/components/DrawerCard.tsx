@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
-import { Divider, ListItem, Typography } from "@mui/material";
+import { Divider, ListItem, Typography, IconButton } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 interface DrawerCardProps {
   stock: string;
   crypto: boolean;
+  handleDelete: (ticker: string) => void;
 }
 
 interface StockData {
@@ -33,10 +35,15 @@ const initialCryptoState: CryptoData = {
   initial: 0,
 };
 
-const DrawerCard: React.FC<DrawerCardProps> = ({ stock, crypto }) => {
-  const [currentData, setCurrentData] = useState<StockData>(Object);
+const DrawerCard: React.FC<DrawerCardProps> = ({
+  stock,
+  crypto,
+  handleDelete,
+}) => {
+  const [currentData, setCurrentData] = useState<StockData>(initialState);
   const [currentCryptoData, setCurrentCryptoData] =
     useState<CryptoData>(initialCryptoState);
+  const [showButton, setShowButton] = useState(false);
 
   useEffect(() => {
     const url = crypto
@@ -54,9 +61,13 @@ const DrawerCard: React.FC<DrawerCardProps> = ({ stock, crypto }) => {
         crypto ? setCurrentCryptoData(response) : setCurrentData(response)
       )
       .catch((err) => {
-        console.log(err);
+        //console.log(err);
       });
   }, [crypto, stock]);
+
+  const handleMouseOver = () => setShowButton(true);
+  const handleMouseOut = () => setShowButton(false);
+
   let valueDiff: number;
   let currentGain: number;
   if (currentData.current) {
@@ -71,20 +82,34 @@ const DrawerCard: React.FC<DrawerCardProps> = ({ stock, crypto }) => {
 
   return (
     <>
-      <ListItem sx={{ display: "flex" }}>
+      <ListItem
+        onMouseOver={handleMouseOver}
+        onMouseOut={handleMouseOut}
+        sx={{ display: "flex" }}
+      >
         <Typography variant="h6" component="div">
           {stock}
         </Typography>
-        <Typography
-          variant="h6"
-          component="div"
-          color={currentGain > 0 ? "green" : "red"}
-          sx={{ marginLeft: "auto" }}
-        >
-          {valueDiff
-            ? `${valueDiff.toFixed(2)} ${currentGain.toFixed(2)}%`
-            : "Not Found"}
-        </Typography>
+        {showButton ? (
+          <IconButton
+            onClick={(e) => handleDelete(stock)}
+            size="small"
+            sx={{ marginLeft: "auto" }}
+          >
+            <DeleteIcon fontSize="inherit" />
+          </IconButton>
+        ) : (
+          <Typography
+            variant="h6"
+            component="div"
+            color={currentGain > 0 ? "green" : "red"}
+            sx={{ marginLeft: "auto" }}
+          >
+            {valueDiff
+              ? `${valueDiff.toFixed(2)} ${currentGain.toFixed(2)}%`
+              : "Not Found"}
+          </Typography>
+        )}
       </ListItem>
       <Divider />
     </>
