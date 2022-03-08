@@ -4,7 +4,7 @@ import { Card, CardContent, Typography, ButtonBase } from "@mui/material";
 import { Link } from "react-router-dom";
 
 interface CandlestickGraphProps {
-  stock?: string;
+  stock: string;
   crypto: boolean;
   width: number;
   height: number;

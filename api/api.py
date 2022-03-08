@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from get_time import get_timestamp
 import flask as Flask
 from flask import jsonify
+import yfinance as yf
 
 load_dotenv(dotenv_path="./.env.local")
 FRED_KEY = os.environ.get("FRED_KEY", "")
@@ -26,6 +27,12 @@ def get_current_data(stock):
     }
 
 
+@app.route("/api/info/<stock>")
+def get_info(stock):
+    ticker = yf.Ticker(stock)
+    return {"name": ticker.info["longName"]}
+
+
 @app.route("/api/news/<stock>")
 def get_news_data(stock):
     today = get_timestamp("today")
@@ -40,9 +47,6 @@ def get_news_data(stock):
         f"https://finnhub.io/api/v1/company-news",
         params=payload,
     ).json()
-    # processed_news = {}
-    # for index, item in fh_response:
-    #     processed_news[index]["headline"] = item["headline"]
     return jsonify(fh_response[:10])
 
 
