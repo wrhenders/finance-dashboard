@@ -24,10 +24,13 @@ type NewsObject = {
 };
 
 const NewsList: React.FC<NewsListProps> = ({ symbol, crypto }) => {
-  const [news, setNews] = useState<NewsObject[]>();
+  const [news, setNews] = useState<NewsObject[] | null>();
 
   useEffect(() => {
-    if (crypto) return;
+    if (crypto) {
+      setNews(null);
+      return;
+    }
     fetch(`/api/news/${symbol}`)
       .then((response) => {
         if (!response.ok) {
@@ -44,7 +47,7 @@ const NewsList: React.FC<NewsListProps> = ({ symbol, crypto }) => {
 
   const createNewsList = () => {
     if (!news) {
-      return;
+      return <></>;
     }
     return news.map((entryNum) => {
       return (
