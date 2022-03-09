@@ -1,9 +1,10 @@
 import os
+from flask_cors import CORS
 import requests
+import sys
 from dotenv import load_dotenv
 from get_time import get_timestamp
-import flask as Flask
-from flask import jsonify
+from flask import Flask, jsonify, request
 import yfinance as yf
 
 load_dotenv(dotenv_path="./.env.local")
@@ -12,7 +13,23 @@ FINNHUB_KEY = os.environ.get("FINNHUB_KEY", "")
 TD_KEY = os.environ.get("TD_KEY", "")
 POLY_KEY = os.environ.get("POLY_KEY", "")
 
-app = Flask.Flask(__name__)
+app = Flask(__name__)
+CORS(app)
+
+
+@app.route("/api/submit", methods=["POST"])
+def submit():
+    if request.method == "POST":
+        ticker = request.json
+        print(ticker, file=sys.stdout)
+        return request.json
+
+
+# @app.route("/submit-crypto", methods=["Post"])
+# def submit():
+#     if request.method == "POST":
+#         crypto = request.json
+#         print(crypto)
 
 
 @app.route("/api/current/<stock>")

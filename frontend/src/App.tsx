@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Box, Grid } from "@mui/material";
 import { Routes, Route } from "react-router-dom";
 import HeaderBar from "./components/HeaderBar";
@@ -17,6 +17,13 @@ const App = () => {
       return;
     }
     setTickerList([ticker, ...tickerList]);
+    fetch(`/api/submit`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ symbol: ticker }),
+    }).catch((err) => console.log(err));
   };
   const handleCryptoSubmit = (ticker: string) => {
     if (cryptoList.includes(ticker)) {
