@@ -1,9 +1,9 @@
 import os
 from flask_cors import CORS
 import requests
-import sys
 from dotenv import load_dotenv
 from get_time import get_timestamp
+from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, jsonify, request
 import yfinance as yf
 
@@ -12,24 +12,101 @@ FRED_KEY = os.environ.get("FRED_KEY", "")
 FINNHUB_KEY = os.environ.get("FINNHUB_KEY", "")
 TD_KEY = os.environ.get("TD_KEY", "")
 POLY_KEY = os.environ.get("POLY_KEY", "")
+DATABASE_KEY = os.environ.get("DATABASE_KEY", "")
 
 app = Flask(__name__)
 CORS(app)
+
+from werkzeug.debug import DebuggedApplication
+
+app.wsgi_app = DebuggedApplication(app.wsgi_app, True)
+
+ENV = "dev"
+
+if ENV == "dev":
+    app.debug = True
+    app.config[
+        "SQLALCHEMY_DATABASE_URI"
+    ] = f"postgresql://postgres:{DATABASE_KEY}@localhost/tickers"
+else:
+    app.debug = False
+    app.config["SQLALCHEMY_DATABASE_URI"] = ""
+
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+db = SQLAlchemy(app)
+
+
+class TickerList(db.Model):
+    __tablename__ = "stocklist"
+    id = db.Column(db.Integer, primary_key=True)
+    stock = db.Column(db.String(4))
+    crypto = db.Column(db.String(4))
+
+    def __init__(self, stock, crypto):
+        self.stock = stock
+        self.crypto = crypto
+
+    def serialize(self):
+        return {"stock": self.stock, "crypto": self.crypto}
 
 
 @app.route("/api/submit", methods=["POST"])
 def submit():
     if request.method == "POST":
-        ticker = request.json
-        print(ticker, file=sys.stdout)
+        ticker = request.json["symbol"]
+        if db.session.query(TickerList).filter(TickerList.stock == ticker).count() == 0:
+            data = TickerList(ticker, "NULL")
+            db.session.add(data)
+            db.session.commit()
         return request.json
 
 
-# @app.route("/submit-crypto", methods=["Post"])
-# def submit():
-#     if request.method == "POST":
-#         crypto = request.json
-#         print(crypto)
+@app.route("/api/delete", methods=["POST"])
+def delete():
+    if request.method == "POST":
+        req = request.json
+        ticker = req["symbol"]
+        crypto = req["crypto"]
+        if crypto:
+            TickerList.query.filter(TickerList.crypto == ticker).delete()
+        else:
+            TickerList.query.filter(TickerList.stock == ticker).delete()
+        db.session.commit()
+        return request.json
+
+
+@app.route("/api/get-list/")
+def get_list():
+    try:
+        list = TickerList.query.all()
+        stocks = []
+        crypto = []
+        for e in list:
+            if e.stock != "NULL":
+                stocks.append(e.stock)
+            if e.crypto != "NULL":
+                crypto.append(e.crypto)
+        return {"stocks": stocks, "crypto": crypto}
+    except Exception as e:
+        return str(e)
+
+
+@app.route("/api/submit-crypto", methods=["POST"])
+def submit_crypto():
+    if request.method == "POST":
+        crypto = request.json["crypto"]
+        print(crypto)
+        if (
+            db.session.query(TickerList).filter(TickerList.crypto == crypto).count()
+            == 0
+        ):
+            print("inCheck")
+            data = TickerList("NULL", crypto)
+            db.session.add(data)
+            db.session.commit()
+        print("checked")
+        return request.json
 
 
 @app.route("/api/current/<stock>")

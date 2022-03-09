@@ -6,10 +6,33 @@ import LeftDrawer from "./components/LeftDrawer";
 import Charts from "./components/Charts";
 import SingleName from "./components/SingleName";
 
+type ListObject = {
+  stocks: string[];
+  crypto: string[];
+};
+
 const App = () => {
   const [toggleDrawer, setToggleDrawer] = useState(false);
   const [tickerList, setTickerList] = useState<string[]>([]);
   const [cryptoList, setCryptoList] = useState<string[]>([]);
+
+  useEffect(() => {
+    fetch(`/api/get-list`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("List not found");
+        }
+        return response;
+      })
+      .then((response) => response.json())
+      .then((response: ListObject) => {
+        setTickerList(response.stocks);
+        setCryptoList(response.crypto);
+      })
+      .catch(() => {
+        //console.log(err);
+      });
+  }, []);
 
   const handleDrawerToggle = () => setToggleDrawer(!toggleDrawer);
   const handleSubmit = (ticker: string) => {
@@ -30,8 +53,25 @@ const App = () => {
       return;
     }
     setCryptoList([ticker, ...cryptoList]);
+    fetch(`/api/submit-crypto`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ crypto: ticker }),
+    }).catch((err) => console.log(err));
   };
   const handleDelete = (ticker: string) => {
+    fetch(`/api/delete`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        symbol: ticker,
+        crypto: tickerList.includes(ticker) ? false : true,
+      }),
+    }).catch((err) => console.log(err));
     setTickerList(tickerList.filter((stock) => stock !== ticker));
     setCryptoList(cryptoList.filter((stock) => stock !== ticker));
   };
