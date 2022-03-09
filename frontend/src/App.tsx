@@ -45,7 +45,7 @@ const App = () => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ symbol: ticker }),
+      body: JSON.stringify({ symbol: ticker, crypto: false }),
     }).catch((err) => console.log(err));
   };
   const handleCryptoSubmit = (ticker: string) => {
@@ -53,12 +53,12 @@ const App = () => {
       return;
     }
     setCryptoList([ticker, ...cryptoList]);
-    fetch(`/api/submit-crypto`, {
+    fetch(`/api/submit`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ crypto: ticker }),
+      body: JSON.stringify({ symbol: ticker, crypto: true }),
     }).catch((err) => console.log(err));
   };
   const handleDelete = (ticker: string) => {

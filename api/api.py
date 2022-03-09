@@ -17,10 +17,6 @@ DATABASE_KEY = os.environ.get("DATABASE_KEY", "")
 app = Flask(__name__)
 CORS(app)
 
-from werkzeug.debug import DebuggedApplication
-
-app.wsgi_app = DebuggedApplication(app.wsgi_app, True)
-
 ENV = "dev"
 
 if ENV == "dev":
@@ -54,11 +50,25 @@ class TickerList(db.Model):
 @app.route("/api/submit", methods=["POST"])
 def submit():
     if request.method == "POST":
-        ticker = request.json["symbol"]
-        if db.session.query(TickerList).filter(TickerList.stock == ticker).count() == 0:
-            data = TickerList(ticker, "NULL")
-            db.session.add(data)
-            db.session.commit()
+        req = request.json
+        ticker = req["symbol"]
+        crypto = req["crypto"]
+        if crypto:
+            if (
+                db.session.query(TickerList).filter(TickerList.crypto == ticker).count()
+                == 0
+            ):
+                data = TickerList("NULL", ticker)
+                db.session.add(data)
+                db.session.commit()
+        else:
+            if (
+                db.session.query(TickerList).filter(TickerList.stock == ticker).count()
+                == 0
+            ):
+                data = TickerList(ticker, "NULL")
+                db.session.add(data)
+                db.session.commit()
         return request.json
 
 
@@ -90,23 +100,6 @@ def get_list():
         return {"stocks": stocks, "crypto": crypto}
     except Exception as e:
         return str(e)
-
-
-@app.route("/api/submit-crypto", methods=["POST"])
-def submit_crypto():
-    if request.method == "POST":
-        crypto = request.json["crypto"]
-        print(crypto)
-        if (
-            db.session.query(TickerList).filter(TickerList.crypto == crypto).count()
-            == 0
-        ):
-            print("inCheck")
-            data = TickerList("NULL", crypto)
-            db.session.add(data)
-            db.session.commit()
-        print("checked")
-        return request.json
 
 
 @app.route("/api/current/<stock>")
