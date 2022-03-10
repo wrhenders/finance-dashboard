@@ -141,20 +141,38 @@ def get_news_data(stock):
 def get_candle_data(stock):
     open_timestamp = get_timestamp("open")
     close_timestamp = get_timestamp("close")
-    payload = {
-        "token": FINNHUB_KEY,
-        "symbol": stock,
-        "resolution": 5,
-        "from": open_timestamp,
-        "to": close_timestamp,
-    }
-    fh_response = requests.get(
-        f"https://finnhub.io/api/v1/stock/candle",
-        params=payload,
-    ).json()
-    poly_response = requests.get(
-        f"https://api.polygon.io/v2/aggs/ticker/{stock}/prev",
-        params={"apiKey": POLY_KEY},
+    yesterdays_open = get_timestamp("yesterday_open")
+    yesterdays_close = get_timestamp("yesterday_close")
+    try:
+        payload = {
+            "token": FINNHUB_KEY,
+            "symbol": stock,
+            "resolution": 5,
+            "from": open_timestamp,
+            "to": close_timestamp,
+        }
+        fh_response = requests.get(
+            f"https://finnhub.io/api/v1/stock/candle",
+            params=payload,
+        ).json()
+    except Exception as e:
+        return str(e)
+    else:
+        payload = {
+            "token": FINNHUB_KEY,
+            "symbol": stock,
+            "resolution": 5,
+            "from": yesterdays_open,
+            "to": yesterdays_close,
+        }
+        fh_response = requests.get(
+            f"https://finnhub.io/api/v1/stock/candle",
+            params=payload,
+        ).json()
+
+    td_response = requests.get(
+        f"https://api.tdameritrade.com/v1/marketdata/{stock}/quotes",
+        params={"apikey": TD_KEY},
     ).json()
 
     processed_values = {}
@@ -163,7 +181,7 @@ def get_candle_data(stock):
     processed_values["close"] = fh_response["c"]
     processed_values["high"] = fh_response["h"]
     processed_values["low"] = fh_response["l"]
-    processed_values["initial"] = poly_response["results"][0]["c"]
+    processed_values["initial"] = td_response[stock]["closePrice"]
     return processed_values
 
 
