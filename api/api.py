@@ -143,21 +143,19 @@ def get_candle_data(stock):
     close_timestamp = get_timestamp("close")
     yesterdays_open = get_timestamp("yesterday_open")
     yesterdays_close = get_timestamp("yesterday_close")
-    try:
-        payload = {
-            "token": FINNHUB_KEY,
-            "symbol": stock,
-            "resolution": 5,
-            "from": open_timestamp,
-            "to": close_timestamp,
-        }
-        fh_response = requests.get(
-            f"https://finnhub.io/api/v1/stock/candle",
-            params=payload,
-        ).json()
-    except Exception as e:
-        return str(e)
-    else:
+    payload = {
+        "token": FINNHUB_KEY,
+        "symbol": stock,
+        "resolution": 5,
+        "from": open_timestamp,
+        "to": close_timestamp,
+    }
+    fh_response = requests.get(
+        f"https://finnhub.io/api/v1/stock/candle",
+        params=payload,
+    ).json()
+
+    if "error" in fh_response.keys():
         payload = {
             "token": FINNHUB_KEY,
             "symbol": stock,
