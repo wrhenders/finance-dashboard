@@ -6,8 +6,7 @@ interface LeftDrawerProps {
   open: boolean;
   tickerList: string[];
   cryptoList: string[];
-  handleSubmit: (ticker: string) => void;
-  handleCryptoSubmit: (ticker: string) => void;
+  handleSubmit: (ticker: string, crypto: boolean) => void;
   handleDelete: (ticker: string) => void;
 }
 
@@ -17,7 +16,6 @@ const LeftDrawer: React.FC<LeftDrawerProps> = ({
   cryptoList,
   handleSubmit,
   handleDelete,
-  handleCryptoSubmit,
 }) => {
   const [input, setInput] = useState("");
   const [cryptoInput, setCryptoInput] = useState("");
@@ -67,7 +65,7 @@ const LeftDrawer: React.FC<LeftDrawerProps> = ({
         sx={{ m: 1 }}
         onKeyDown={(e) => {
           if (e.key === "Enter") {
-            handleSubmit(input);
+            handleSubmit(input, false);
             setInput("");
           }
         }}
@@ -82,7 +80,7 @@ const LeftDrawer: React.FC<LeftDrawerProps> = ({
         sx={{ m: 1 }}
         onKeyDown={(e) => {
           if (e.key === "Enter") {
-            handleCryptoSubmit(cryptoInput);
+            handleSubmit(cryptoInput, true);
             setCryptoInput("");
           }
         }}

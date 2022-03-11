@@ -35,7 +35,7 @@ const App = () => {
   }, []);
 
   const handleDrawerToggle = () => setToggleDrawer(!toggleDrawer);
-  const handleSubmit = (ticker: string) => {
+  const handleSubmit = (ticker: string, crypto: boolean) => {
     if (tickerList.includes(ticker)) {
       return;
     }
@@ -45,22 +45,10 @@ const App = () => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ symbol: ticker, crypto: false }),
+      body: JSON.stringify({ symbol: ticker, crypto }),
     }).catch((err) => console.log(err));
   };
-  const handleCryptoSubmit = (ticker: string) => {
-    if (cryptoList.includes(ticker)) {
-      return;
-    }
-    setCryptoList([ticker, ...cryptoList]);
-    fetch(`/api/submit`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ symbol: ticker, crypto: true }),
-    }).catch((err) => console.log(err));
-  };
+
   const handleDelete = (ticker: string) => {
     fetch(`/api/delete`, {
       method: "POST",
@@ -92,7 +80,6 @@ const App = () => {
         tickerList={tickerList}
         cryptoList={cryptoList}
         handleSubmit={handleSubmit}
-        handleCryptoSubmit={handleCryptoSubmit}
         handleDelete={handleDelete}
       />
       <Grid

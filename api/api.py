@@ -155,7 +155,7 @@ def get_candle_data(stock):
         params=payload,
     ).json()
 
-    if "error" in fh_response.keys():
+    if "error" in fh_response.keys() or "s" in fh_response.keys():
         payload = {
             "token": FINNHUB_KEY,
             "symbol": stock,
