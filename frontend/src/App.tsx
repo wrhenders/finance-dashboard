@@ -17,7 +17,7 @@ const App = () => {
   const [cryptoList, setCryptoList] = useState<string[]>([]);
 
   useEffect(() => {
-    fetch(`/api/get-list`)
+    fetch(`https://ryans-finance-dashboard.herokuapp.com/api/get-list`)
       .then((response) => {
         if (!response.ok) {
           throw new Error("List not found");
@@ -36,11 +36,16 @@ const App = () => {
 
   const handleDrawerToggle = () => setToggleDrawer(!toggleDrawer);
   const handleSubmit = (ticker: string, crypto: boolean) => {
-    if (tickerList.includes(ticker)) {
+    if (tickerList.includes(ticker) || cryptoList.includes(ticker)) {
       return;
     }
-    setTickerList([ticker, ...tickerList]);
-    fetch(`/api/submit`, {
+    if (crypto) {
+      setCryptoList([ticker, ...cryptoList]);
+    } else {
+      setTickerList([ticker, ...tickerList]);
+    }
+
+    fetch(`https://ryans-finance-dashboard.herokuapp.com/api/submit`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -50,7 +55,7 @@ const App = () => {
   };
 
   const handleDelete = (ticker: string) => {
-    fetch(`/api/delete`, {
+    fetch(`https://ryans-finance-dashboard.herokuapp.com/api/delete`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

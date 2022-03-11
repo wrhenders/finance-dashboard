@@ -54,8 +54,8 @@ const DrawerCard: React.FC<DrawerCardProps> = ({
 
   useEffect(() => {
     const url = crypto
-      ? `/api/candle/crypto/${stock}`
-      : `/api/current/${stock}`;
+      ? `https://ryans-finance-dashboard.herokuapp.com/api/candle/crypto/${stock}`
+      : `https://ryans-finance-dashboard.herokuapp.com/api/current/${stock}`;
     fetch(url)
       .then((response) => {
         if (!response.ok) {

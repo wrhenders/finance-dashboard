@@ -35,7 +35,11 @@ const CandlestickGraph: React.FC<CandlestickGraphProps> = ({
   const [currentChartData, setCurrentChartData] =
     useState<StockData>(initialState);
   useEffect(() => {
-    fetch(`/api/candle/${crypto ? "crypto/" : ""}${stock}`)
+    fetch(
+      `https://ryans-finance-dashboard.herokuapp.com/api/candle/${
+        crypto ? "crypto/" : ""
+      }${stock}`
+    )
       .then((response) => {
         if (!response.ok) {
           throw new Error("Stock not found");

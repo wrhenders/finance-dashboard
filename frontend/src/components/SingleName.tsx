@@ -22,7 +22,7 @@ const SingleName: React.FC = () => {
       setName({ name: symbol });
       return;
     }
-    fetch(`/api/info/${symbol}`)
+    fetch(`https://ryans-finance-dashboard.herokuapp.com/api/info/${symbol}`)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Stock not found");

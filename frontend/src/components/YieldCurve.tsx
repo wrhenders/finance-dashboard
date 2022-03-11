@@ -53,7 +53,7 @@ const YieldCurve: React.FC<YieldCurveProps> = ({ width, height }) => {
     useState<TreasuryCurve>(initialState);
 
   useEffect(() => {
-    fetch(`/api/FRED`)
+    fetch(`https://ryans-finance-dashboard.herokuapp.com/api/FRED`)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Stock not found");

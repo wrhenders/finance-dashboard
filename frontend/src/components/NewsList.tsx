@@ -31,7 +31,7 @@ const NewsList: React.FC<NewsListProps> = ({ symbol, crypto }) => {
       setNews(null);
       return;
     }
-    fetch(`/api/news/${symbol}`)
+    fetch(`https://ryans-finance-dashboard.herokuapp.com/api/news/${symbol}`)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Stock not found");
