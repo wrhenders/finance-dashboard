@@ -11,7 +11,6 @@ load_dotenv(dotenv_path="./.env.local")
 FRED_KEY = os.environ.get("FRED_KEY", "")
 FINNHUB_KEY = os.environ.get("FINNHUB_KEY", "")
 TD_KEY = os.environ.get("TD_KEY", "")
-POLY_KEY = os.environ.get("POLY_KEY", "")
 DATABASE_KEY = os.environ.get("DATABASE_KEY", "")
 
 app = Flask(__name__)
