@@ -160,18 +160,18 @@ def get_candle_data(stock):
         params=payload,
     ).json()
 
-    # if "error" in fh_response.keys() or "s" in fh_response.keys():
-    #     payload = {
-    #         "token": FINNHUB_KEY,
-    #         "symbol": stock,
-    #         "resolution": 5,
-    #         "from": yesterdays_open,
-    #         "to": yesterdays_close,
-    #     }
-    #     fh_response = requests.get(
-    #         f"https://finnhub.io/api/v1/stock/candle",
-    #         params=payload,
-    #     ).json()
+    if "error" in fh_response.keys() or "s" in fh_response.keys():
+        payload = {
+            "token": FINNHUB_KEY,
+            "symbol": stock,
+            "resolution": 5,
+            "from": yesterdays_open,
+            "to": yesterdays_close,
+        }
+        fh_response = requests.get(
+            f"https://finnhub.io/api/v1/stock/candle",
+            params=payload,
+        ).json()
 
     td_response = requests.get(
         f"https://api.tdameritrade.com/v1/marketdata/{stock}/quotes",
