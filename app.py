@@ -160,7 +160,7 @@ def get_candle_data(stock):
         params=payload,
     ).json()
 
-    if "error" in fh_response.keys() or "s" in fh_response.keys():
+    if "error" in fh_response.keys() or fh_response["s"] != "ok":
         payload = {
             "token": FINNHUB_KEY,
             "symbol": stock,
@@ -186,7 +186,7 @@ def get_candle_data(stock):
     processed_values["low"] = fh_response["l"]
     processed_values["initial"] = td_response[stock]["closePrice"]
 
-    return fh_response
+    return processed_values
 
 
 @app.route("/api/candle/crypto/<symbol>")
