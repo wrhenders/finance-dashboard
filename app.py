@@ -12,9 +12,9 @@ FRED_KEY = os.environ.get("FRED_KEY", "")
 FINNHUB_KEY = os.environ.get("FINNHUB_KEY", "")
 TD_KEY = os.environ.get("TD_KEY", "")
 DATABASE_KEY = os.environ.get("DATABASE_KEY", "")
-DATABASE_URL = os.environ.get('DATABASE_URL').replace("://", "ql://", 1)
+DATABASE_URL = os.environ.get("DATABASE_URL").replace("://", "ql://", 1)
 
-app = Flask(__name__, static_folder='frontend/build', static_url_path='')
+app = Flask(__name__, static_folder="frontend/build", static_url_path="")
 CORS(app)
 
 ENV = "prod"
@@ -46,9 +46,11 @@ class TickerList(db.Model):
     def serialize(self):
         return {"stock": self.stock, "crypto": self.crypto}
 
-@app.route('/')
+
+@app.route("/")
 def serve():
-    return send_from_directory(app.static_folder, 'index.html')
+    return send_from_directory(app.static_folder, "index.html")
+
 
 @app.route("/api/submit", methods=["POST"])
 def submit():
@@ -158,18 +160,18 @@ def get_candle_data(stock):
         params=payload,
     ).json()
 
-    if "error" in fh_response.keys() or "s" in fh_response.keys():
-        payload = {
-            "token": FINNHUB_KEY,
-            "symbol": stock,
-            "resolution": 5,
-            "from": yesterdays_open,
-            "to": yesterdays_close,
-        }
-        fh_response = requests.get(
-            f"https://finnhub.io/api/v1/stock/candle",
-            params=payload,
-        ).json()
+    # if "error" in fh_response.keys() or "s" in fh_response.keys():
+    #     payload = {
+    #         "token": FINNHUB_KEY,
+    #         "symbol": stock,
+    #         "resolution": 5,
+    #         "from": yesterdays_open,
+    #         "to": yesterdays_close,
+    #     }
+    #     fh_response = requests.get(
+    #         f"https://finnhub.io/api/v1/stock/candle",
+    #         params=payload,
+    #     ).json()
 
     td_response = requests.get(
         f"https://api.tdameritrade.com/v1/marketdata/{stock}/quotes",
@@ -183,7 +185,8 @@ def get_candle_data(stock):
     processed_values["high"] = fh_response["h"]
     processed_values["low"] = fh_response["l"]
     processed_values["initial"] = td_response[stock]["closePrice"]
-    return processed_values
+
+    return fh_response
 
 
 @app.route("/api/candle/crypto/<symbol>")
@@ -250,6 +253,6 @@ def get_FRED_data():
             params=payload,
         ).json()["observations"]
         values[i] = response[-1]["value"]
-        values[i + "_old"] = response[0]["value"]
+        values[i + "_old"] = response[1]["value"]
 
     return values
